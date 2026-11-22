@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Monthly Salary Sheet{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+
+<div class="container-fluid py-4">
+
+  <!-- ==========================================
+       MONTH / YEAR / PROCESS
+  ========================================== -->
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h4>Monthly Salary Sheet</h4>
+
+      <div class="row g-2 align-items-end">
+
+        <div class="col-md-3">
+          <label for="salaryMonth" class="form-label">Salary Month</label>
+          <select id="salaryMonth" name="salary_month" class="form-select"></select>
+        </div>
+
+        <div class="col-md-3">
+          <label for="salaryYear" class="form-label">Salary Year</label>
+          <select id="salaryYear" name="salary_year" class="form-select"></select>
+        </div>
+
+        <div class="col-md-3">
+          <button type="button" id="processSalary" class="btn btn-primary">
+            PROCESS
+          </button>
+        </div>
+
+      </div>
+
+      {% comment %}
+      <p class="small text-muted mt-3 mb-0">
+        Every amount is added: fixed salary setup plus middleware entries tagged
+        for the selected <strong>salary month and year</strong> (PF, gratuity,
+        Eid bonus, increment and incentives). The entry date does not matter.
+        Saving creates transaction records, not a payment.
+      </p>
+      {% endcomment %}
+
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SALARY SHEET TABLE
+  ========================================== -->
+
+  <div class="card shadow-sm mt-3">
+    <div class="card-body">
+
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <strong id="periodTitle">Salary Sheet</strong>
+        <button type="button" id="saveSalary" class="btn btn-success" disabled>
+          Save Selected
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover table-sm" id="sheetTable">
+          <thead>
+            <tr id="sheetHeaders">
+              <th><input type="checkbox" id="checkAll" /></th>
+              <th>Employee ID</th>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Designation</th>
+              <th>Total Salary</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="sheetRows">
+            <tr>
+              <td colspan="7" class="text-center text-muted">
+                Select month and year, then PROCESS.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/employee_salary_sheet/sheet.js' %}"></script>
+<script src="{% static 'js/payroll/employee_monthly_combo.js' %}"></script>
+<script src="{% static 'js/payroll/employee_yearly_combo.js' %}"></script>
+{% endblock %}

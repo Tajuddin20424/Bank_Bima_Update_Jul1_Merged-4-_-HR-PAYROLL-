@@ -1,0 +1,603 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/employee_report.css' %}">
+
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<input type="hidden" id="selected_emp_id" value="">
+
+<div class="container-fluid report-page">
+
+    <div class="form-shell">
+
+        <!-- Top Header Bar -->
+        <div class="form-topbar">
+            <div>
+                <h4 class="page-title">Employee Report</h4>
+                <div class="page-subtitle">
+                    Select an employee, edit all details inline, and preview the CV report.
+                </div>
+            </div>
+
+            <div class="top-actions">
+                <button id="previewBtn" type="button" class="btn btn-dark">Preview</button>
+            </div>
+        </div>
+
+        <!-- Employee Selection Dropdown -->
+        <div class="patient-row">
+            <div>
+                <label>Employee Name:</label>
+                <select id="EmployeeSelect" class="form-control">
+                    <option value="">Select Employee</option>
+                    {% for emp in employees %}
+                        <option value="{{ emp.employee_id }}" {% if request.GET.emp_id == emp.employee_id %}selected{% endif %}>{{ emp.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Work Area (Visible when Employee is Selected) -->
+        <div id="reportWorkArea">
+
+            <!-- ============================================================
+                 1. PERSONAL DETAILS
+            ============================================================ -->
+            <div class="section-card">
+                <div class="section-heading d-flex justify-content-between align-items-center">
+                    <span>Employee Personal Details</span>
+                    <button type="button" id="savePersonalBtn" class="btn btn-sm btn-primary">
+                        Save Changes
+                    </button>
+                </div>
+
+                <div id="headerFields">
+
+                    <div>
+                        <label class="form-label">Employee ID:</label>
+                        <input type="text" id="viewEmpId" class="form-control header-input" placeholder="Employee ID" readonly>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Name:</label>
+                        <input type="text" id="viewName" class="form-control header-input" placeholder="Name">
+                    </div>
+
+                    <div>
+                        <label class="form-label">Father's Name:</label>
+                        <input type="text" id="viewFather" class="form-control header-input" placeholder="Father's Name">
+                    </div>
+
+                    <div>
+                        <label class="form-label">Mother's Name:</label>
+                        <input type="text" id="viewMother" class="form-control header-input" placeholder="Mother's Name">
+                    </div>
+
+                    <div>
+                        <label class="form-label">Date of Birth:</label>
+                        <input type="date" id="viewDob" class="form-control header-input" placeholder="DOB">
+                    </div>
+
+                    <div>
+                        <label class="form-label">Gender:</label>
+                        <select id="viewGender" class="form-select header-input">
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Religion:</label>
+                        <select id="viewReligion" class="form-select header-input">
+                            <option value="">Select</option>
+                            <option value="Islam">Islam</option>
+                            <option value="Hinduism">Hinduism</option>
+                            <option value="Buddhism">Buddhism</option>
+                            <option value="Christianity">Christianity</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Marital Status:</label>
+                        <select id="viewMarital" class="form-select header-input">
+                            <option value="">Select</option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Divorced">Divorced</option>
+                            <option value="Widowed">Widowed</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Nationality:</label>
+                        <input type="text" id="viewNationality" class="form-control header-input" placeholder="Nationality">
+                    </div>
+
+                    <div>
+                        <label class="form-label">NID No:</label>
+                        <input type="text" id="viewNid" class="form-control header-input" placeholder="NID No">
+                    </div>
+
+                    <div>
+                        <label class="form-label">Phone:</label>
+                        <input type="text" id="viewPhone" class="form-control header-input" placeholder="Phone">
+                    </div>
+
+                    <div>
+                        <label class="form-label">Blood Group:</label>
+                        <select id="viewBlood" class="form-select header-input">
+                            <option value="">Select</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Email:</label>
+                        <input type="email" id="viewEmail" class="form-control header-input" placeholder="Email">
+                    </div>
+
+                    <div>
+                        <label class="form-label">Location ID:</label>
+                        <input type="number" id="viewLocationId" class="form-control header-input" placeholder="Location ID" min="1">
+                    </div>
+
+                    <div>
+                        <label class="form-label">Status:</label>
+                        <select id="viewStatus" class="form-select header-input">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div style="grid-column: span 2;">
+                        <label class="form-label">Address:</label>
+                        <input type="text" id="viewAddress" class="form-control header-input" placeholder="Address">
+                    </div>
+
+                    <input type="hidden" id="viewLocation" value="">
+
+                </div>
+            </div>
+
+            <!-- ============================================================
+                 2. EDUCATION
+            ============================================================ -->
+            <div class="section-card">
+                <div class="section-heading">
+                    Employee Education Details
+                </div>
+
+                <!-- Inline Education Edit Form (hidden by default) -->
+                <div id="educationFormPanel" class="inline-form-panel" style="display:none;">
+                    <form id="educationForm" autocomplete="off">
+                        <input type="hidden" id="education_id" name="education_id">
+
+                        <div class="row g-2">
+                            <div class="col-md-3">
+                                <label class="form-label">Degree <span class="text-danger">*</span></label>
+                                <input type="text" id="edu_degree" name="degree" class="form-control" placeholder="SSC / HSC / BSc">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Group</label>
+                                <select id="edu_group" name="group" class="form-select">
+                                    <option value="">Select Group</option>
+                                    <option value="Science">Science</option>
+                                    <option value="Commerce">Commerce</option>
+                                    <option value="Arts">Arts</option>
+                                    <option value="Humanities">Humanities</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Institution <span class="text-danger">*</span></label>
+                                <input type="text" id="edu_institution" name="institution" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Result</label>
+                                <select id="edu_result" name="result" class="form-select">
+                                    <option value="">Select Result</option>
+                                    <option value="First Division/Class">First Division/Class</option>
+                                    <option value="Second Division/Class">Second Division/Class</option>
+                                    <option value="Third Division/Class">Third Division/Class</option>
+                                    <option value="Pass">Pass</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Scale</label>
+                                <input type="number" step="0.01" min="0" id="edu_scale" name="scale" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">CGPA</label>
+                                <input type="number" step="0.01" min="0" id="edu_cgpa" name="cgpa" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Marks</label>
+                                <input type="number" step="0.01" min="0" id="edu_marks" name="marks" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Batch <span class="text-danger">*</span></label>
+                                <input type="number" min="0" id="edu_batch" name="batch" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Status</label>
+                                <select id="edu_status" name="status" class="form-select">
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end gap-2">
+                                <button type="button" id="educationSaveBtn" class="btn btn-primary w-100">Update</button>
+                                <button type="button" id="educationCancelBtn" class="btn btn-secondary w-100">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle text-center mb-0" id="tableEducation">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 50px;">SL</th>
+                                <th>Degree / Exam</th>
+                                <th>Group / Major</th>
+                                <th>Institution</th>
+                                <th>Result / GPA / Marks</th>
+                                <th>Batch / Passing Year</th>
+                                <th style="width: 150px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="7" class="text-muted py-3">No education records found</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ============================================================
+                 3. TRAINING
+            ============================================================ -->
+            <div class="section-card">
+                <div class="section-heading">
+                    Employee Training Details
+                </div>
+
+                <div id="trainingFormPanel" class="inline-form-panel" style="display:none;">
+                    <form id="trainingForm" autocomplete="off">
+                        <input type="hidden" id="training_id" name="training_id">
+
+                        <div class="row g-2">
+                            <div class="col-md-3">
+                                <label class="form-label">Training Title <span class="text-danger">*</span></label>
+                                <input type="text" id="trn_title" name="training_title" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Topic <span class="text-danger">*</span></label>
+                                <input type="text" id="trn_topic" name="topic" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Institution <span class="text-danger">*</span></label>
+                                <input type="text" id="trn_institution" name="institution_name" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Country</label>
+                                <input type="text" id="trn_country" name="country" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" id="trn_start" name="start_date" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">End Date</label>
+                                <input type="date" id="trn_end" name="end_date" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Status</label>
+                                <select id="trn_status" name="status" class="form-select">
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end gap-2">
+                                <button type="button" id="trainingSaveBtn" class="btn btn-primary w-100">Update</button>
+                                <button type="button" id="trainingCancelBtn" class="btn btn-secondary w-100">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle text-center mb-0" id="tableTraining">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 50px;">SL</th>
+                                <th>Training Title</th>
+                                <th>Topic / Field</th>
+                                <th>Institution</th>
+                                <th>Country</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th style="width: 150px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="8" class="text-muted py-3">No training records found</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ============================================================
+                 4. EXPERIENCE
+            ============================================================ -->
+            <div class="section-card">
+                <div class="section-heading">
+                    Employee Experience
+                </div>
+
+                <div id="experienceFormPanel" class="inline-form-panel" style="display:none;">
+                    <form id="experienceForm" autocomplete="off">
+                        <input type="hidden" id="experience_id" name="experience_id">
+
+                        <div class="row g-2">
+                            <div class="col-md-3">
+                                <label class="form-label">Company Name <span class="text-danger">*</span></label>
+                                <input type="text" id="exp_company" name="company_name" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Designation</label>
+                                <input type="text" id="exp_designation" name="designation" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Department</label>
+                                <input type="text" id="exp_department" name="department" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Company Location</label>
+                                <input type="text" id="exp_location" name="company_location" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" id="exp_start" name="start_date" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">End Date</label>
+                                <input type="date" id="exp_end" name="end_date" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Status</label>
+                                <select id="exp_status" name="status" class="form-select">
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end gap-2">
+                                <button type="button" id="experienceSaveBtn" class="btn btn-primary w-100">Update</button>
+                                <button type="button" id="experienceCancelBtn" class="btn btn-secondary w-100">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle text-center mb-0" id="tableExperience">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 50px;">SL</th>
+                                <th>Company Name</th>
+                                <th>Designation</th>
+                                <th>Department</th>
+                                <th>Company Location</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th style="width: 150px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="8" class="text-muted py-3">No experience records found</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- =========================================================
+     Hidden A4 Source (CV Format) — UNTOUCHED
+========================================================= -->
+<div id="printSource" class="d-none">
+    <div id="reportPreview" class="cv-paper">
+
+        <div class="cv-header-block">
+            <div class="cv-header-info">
+                <h1 class="cv-emp-name" id="cvName">EMPLOYEE NAME</h1>
+                <div class="cv-emp-subtitle" id="cvSubtitle">CURRICULUM VITAE</div>
+                <div class="cv-contact-bar">
+                    <span id="cvContactPhone"><i class="fas fa-phone-alt"></i> <span class="val">-</span></span>
+                    <span id="cvContactEmail"><i class="fas fa-envelope"></i> <span class="val">-</span></span>
+                    <span id="cvContactLocation"><i class="fas fa-map-marker-alt"></i> <span class="val">-</span></span>
+                </div>
+            </div>
+            <div class="cv-header-photo">
+                <img id="cvPhoto" src="" alt="Photo" class="cv-avatar-img">
+            </div>
+        </div>
+
+        <div class="cv-divider"></div>
+
+        <div class="cv-section">
+            <div class="cv-section-title">
+                <span class="cv-title-bar"></span> Personal Details
+            </div>
+            <table class="cv-info-grid">
+                <tr>
+                    <td class="cv-label">Employee ID</td>
+                    <td class="cv-colon">:</td>
+                    <td class="cv-val" id="cvEmpId">-</td>
+                    <td class="cv-label">Date of Birth</td>
+                    <td class="cv-colon">:</td>
+                    <td class="cv-val" id="cvDob">-</td>
+                </tr>
+                <tr>
+                    <td class="cv-label">Father's Name</td>
+                    <td class="cv-colon">:</td>
+                    <td class="cv-val" id="cvFather">-</td>
+                    <td class="cv-label">Mother's Name</td>
+                    <td class="cv-colon">:</td>
+                    <td class="cv-val" id="cvMother">-</td>
+                </tr>
+                <tr>
+                    <td class="cv-label">Gender</td>
+                    <td class="cv-colon">:</td>
+                    <td class="cv-val" id="cvGender">-</td>
+                    <td class="cv-label">Blood Group</td>
+                    <td class="cv-colon">:</td>
+                    <td class="cv-val" id="cvBlood">-</td>
+                </tr>
+                <tr>
+                    <td class="cv-label">Marital Status</td>
+                    <td class="cv-colon">:</td>
+                    <td class="cv-val" id="cvMarital">-</td>
+                    <td class="cv-label">Religion</td>
+                    <td class="cv-colon">:</td>
+                    <td class="cv-val" id="cvReligion">-</td>
+                </tr>
+                <tr>
+                    <td class="cv-label">Nationality</td>
+                    <td class="cv-colon">:</td>
+                    <td class="cv-val" id="cvNationality">-</td>
+                    <td class="cv-label">National ID (NID)</td>
+                    <td class="cv-colon">:</td>
+                    <td class="cv-val" id="cvNid">-</td>
+                </tr>
+                <tr>
+                    <td class="cv-label">Address</td>
+                    <td class="cv-colon">:</td>
+                    <td class="cv-val" colspan="4" id="cvAddress">-</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="cv-section">
+            <div class="cv-section-title">
+                <span class="cv-title-bar"></span> Educational Qualifications
+            </div>
+            <table class="cv-table" id="cvEduTable">
+                <thead>
+                    <tr>
+                        <th style="width: 22%;">Degree / Exam</th>
+                        <th style="width: 20%;">Group / Major</th>
+                        <th style="width: 32%;">Institution</th>
+                        <th style="width: 14%;">Result</th>
+                        <th style="width: 12%;">Passing Year</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5" class="text-center text-muted">No educational qualifications recorded</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cv-section">
+            <div class="cv-section-title">
+                <span class="cv-title-bar"></span> Training & Certifications
+            </div>
+            <table class="cv-table" id="cvTrainTable">
+                <thead>
+                    <tr>
+                        <th style="width: 24%;">Training Title</th>
+                        <th style="width: 24%;">Topic / Field</th>
+                        <th style="width: 26%;">Institution</th>
+                        <th style="width: 14%;">Country</th>
+                        <th style="width: 12%;">Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5" class="text-center text-muted">No training programs recorded</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cv-section">
+            <div class="cv-section-title">
+                <span class="cv-title-bar"></span> Professional Experience
+            </div>
+            <table class="cv-table" id="cvExpTable">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Company / Organization</th>
+                        <th style="width: 23%;">Designation</th>
+                        <th style="width: 18%;">Department</th>
+                        <th style="width: 18%;">Location</th>
+                        <th style="width: 16%;">Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5" class="text-center text-muted">No previous experience recorded</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cv-declaration-block">
+            <p class="cv-declaration-text">
+                I hereby declare that all the information provided above is true and accurate to the best of my knowledge.
+            </p>
+            <div class="cv-signature-row">
+                <div class="cv-sig-box">
+                    <div class="cv-sig-line"></div>
+                    <div class="cv-sig-name" id="cvSigName">Applicant Signature</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- =========================================================
+     A4 Preview Modal — UNTOUCHED
+========================================================= -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-xl-custom modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header py-2">
+                <h5 class="modal-title fw-bold">A4 Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body preview-modal-body">
+                <div class="preview-scale-wrap" id="previewModalPaper"></div>
+            </div>
+
+            <div class="modal-footer py-2">
+                <button type="button" class="btn btn-secondary" id="modalPrintBtn">Print / Download</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.EMPLOYEE_REPORT_CONFIG = {
+        employeeDataUrl: "/employee-report/__EMP_ID__/data/"
+    };
+</script>
+
+<!-- jQuery loaded ONCE, before Bootstrap and report JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/employee/employee_report.js' %}?v=5"></script>
+
+{% endblock %}

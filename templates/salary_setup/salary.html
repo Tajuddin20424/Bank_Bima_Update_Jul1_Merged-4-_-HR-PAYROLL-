@@ -1,0 +1,606 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %}Salary Setup{%endblock %} 
+{% block content %}
+
+<style>
+  /* ==========================================
+       EMPLOYEE SEARCH
+    ========================================== */
+
+  .salary-employee-search-wrapper {
+    position: relative;
+  }
+
+  .salary-employee-search-result {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    min-width: 360px;
+    max-width: min(650px, 90vw);
+    max-height: 320px;
+    overflow-y: auto;
+    overflow-x: auto;
+    background: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1050;
+    margin-top: 4px;
+  }
+
+  .salary-employee-search-result table {
+    width: 100%;
+    margin-bottom: 0;
+    font-size: 14px;
+    border-collapse: collapse;
+  }
+
+  .salary-employee-search-result thead th {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa;
+    z-index: 2;
+    padding: 10px;
+    white-space: nowrap;
+  }
+
+  .salary-employee-search-result tbody td {
+    padding: 9px 10px;
+    vertical-align: middle;
+  }
+
+  .employee-search-row {
+    cursor: pointer;
+  }
+
+  .employee-search-row:hover,
+  .employee-search-row.table-primary {
+    background-color: #dbeafe !important;
+  }
+
+  #employeeSearch:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
+  }
+
+  /* ==========================================
+       TRANSACTION HEAD SEARCH
+    ========================================== */
+
+  .salary-head-search-wrapper {
+    position: relative;
+  }
+
+  .salary-head-search-result {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    min-width: 360px;
+    max-width: min(650px, 90vw);
+    max-height: 320px;
+    overflow-y: auto;
+    overflow-x: auto;
+    background: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1050;
+    margin-top: 4px;
+  }
+
+  .salary-head-search-result table {
+    width: 100%;
+    margin-bottom: 0;
+    font-size: 14px;
+    border-collapse: collapse;
+  }
+
+  .salary-head-search-result thead th {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa;
+    z-index: 2;
+    padding: 10px;
+    white-space: nowrap;
+  }
+
+  .salary-head-search-result tbody td {
+    padding: 9px 10px;
+    vertical-align: middle;
+  }
+
+  .head-search-row {
+    cursor: pointer;
+  }
+
+  .head-search-row:hover,
+  .head-search-row.table-primary {
+    background-color: #dbeafe !important;
+  }
+
+  #headSearch:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
+  }
+
+  /* ==========================================
+       RESPONSIVE SEARCH
+    ========================================== */
+
+  @media (max-width: 767px) {
+    .salary-employee-search-result {
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .salary-head-search-result {
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+</style>
+
+<div class="container-fluid py-3">
+  <!-- ==========================================
+         PAGE HEADER
+    ========================================== -->
+
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h3 class="mb-0">Salary Setup</h3>
+
+    <span class="badge bg-primary"> HR &amp; Payroll </span>
+  </div>
+
+  <!-- ==========================================
+         SALARY SETUP FORM
+    ========================================== -->
+
+  <div class="card shadow-sm mb-4">
+    <!-- ==========================================
+                 TRANSACTION FILTER SECTION
+            ========================================== -->
+
+            <div class="hotel-section-card hotel-filter-section">
+
+                <div class="hotel-section-body">
+
+                    <!-- FIRST ROW -->
+
+                    <div class="row g-3 mb-3">
+
+                        <!-- TRANSACTION MAIN HEAD -->
+
+                        <div class="col-xl col-lg-4 col-md-6">
+
+                            <label for="transactionmainheads">
+                                Transaction Main Head
+                            </label>
+
+                            <select id="transactionmainheads"
+                                    name="transactionmainheads"
+                                    class="form-select">
+
+                                <option value="">
+                                    Select Main Head
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- TRANSACTION METHOD -->
+
+                        <div class="col-xl col-lg-4 col-md-6">
+
+                            <label for="transaction_method">
+                                Transaction Method
+                            </label>
+
+                            <select id="transaction_method"
+                                    name="transaction_method"
+                                    class="form-select">
+                            </select>
+
+                        </div>
+
+
+                        <!-- TRANSACTION GROUP -->
+
+                        <div class="col-xl col-lg-4 col-md-6">
+
+                            <label for="tran_group">
+                                Transaction Group
+                            </label>
+
+                            <select id="tran_group"
+                                    name="tran_group"
+                                    class="form-select">
+                            </select>
+
+                        </div>
+
+
+                        <!-- TRANSACTION CATEGORY -->
+
+                        <div class="col-xl col-lg-6 col-md-6">
+
+                            <label for="transaction_category">
+                                Transaction Category
+                            </label>
+
+                            <select id="transaction_category"
+                                    name="transaction_category"
+                                    class="form-select">
+                            </select>
+
+                        </div>
+
+
+                        <!-- TRANSACTION HEAD -->
+
+                        <div class="col-xl col-lg-6 col-md-6">
+
+                            <label for="transaction_head">
+                                Transaction Head
+                            </label>
+
+                            <select id="transaction_head"
+                                    name="transaction_head"
+                                    class="form-select">
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SECOND ROW -->
+
+                    <div class="row g-3">
+
+                        <!-- TRANSACTION WITH METHOD -->
+
+                        <div class="col-lg-3 col-md-6">
+
+                            <label for="transaction_with_method">
+                                Transaction With Method
+                            </label>
+
+                            <select id="transaction_with_method"
+                                    name="transaction_with_method"
+                                    class="form-select">
+                            </select>
+
+                        </div>
+
+
+                        <!-- TRANSACTION WITH GROUP -->
+
+                        <div class="col-lg-3 col-md-6">
+
+                            <label for="transaction_with">
+                                Transaction With Group
+                            </label>
+
+                            <select id="transaction_with"
+                                    name="transaction_with"
+                                    class="form-select">
+
+                                <option value="">
+                                    Select With
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- TRANSACTION WITH USER -->
+
+                        <div class="col-lg-6 col-md-12">
+
+                            <label for="transaction_with_user">
+                                Transaction With User
+                            </label>
+
+                            <select id="transaction_with_user"
+                                    name="transaction_with_user"
+                                    class="form-select">
+
+                                <option value="">
+                                    Select Supplier
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+    <div class="card-body">
+      <form id="salaryForm">
+        {% csrf_token %}
+
+        <input type="hidden" name="id" id="salaryId" />
+
+        <div class="row g-3">
+          <!-- NEW SEARCH EXISTING EMPLOYEE ========================== -->
+
+      <div class="col-md-3 mb-2">
+            <label for="employeeSearch" class="form-label small fw-bold mb-1">
+              Employee <span class="text-danger">*</span>
+            </label>
+
+            <!-- SELECTED EMPLOYEE ID (save e jabe) -->
+            <div class="d-flex gap-1">
+              {% comment %} <input type="hidden" name="emp_id" id="emp_id" />  {% endcomment %}
+              <input type="text" name="emp_id" id="emp_id" class="form-control form-control-sm" style="width: 130px;" placeholder="ID" />
+              <input
+                type="text"
+                id="employeeSearch"
+                class="form-control form-control-sm"
+                placeholder="Search Employee ID / Name / Phone"
+                autocomplete="off"
+              />
+            </div>
+
+            <div
+              id="employeeSearchResult"
+              class="table-responsive mt-1"
+              style="display: none; max-height: 300px; overflow-y: auto"
+            >
+              <table class="table table-bordered table-sm mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                  </tr>
+                </thead>
+
+                <tbody id="employeeSearchBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- END OF SEARCH EXISTING EMPLOYEE ======================= -->
+
+          <!-- NEW SEARCH TRANSACTION HEAD ========================== -->
+          <div class="col-md-3 mb-2">
+            <label for="headSearch" class="form-label small fw-bold mb-1">
+              Transaction Head <span class="text-danger">*</span>
+            </label>
+
+            <!-- SELECTED HEAD ID (save e jabe) -->
+            <div class="d-flex gap-1">
+              {% comment %} <input type="hidden" name="head_id" id="head_id" />  {% endcomment %}
+              <input type="text" name="head_id" id="head_id" class="form-control form-control-sm" style="width: 130px;" placeholder="ID" />              
+              <input
+                type="text"
+                id="headSearch"
+                class="form-control form-control-sm"
+                placeholder="Search Head ID / Name"
+                autocomplete="off"
+              />
+            </div>
+
+            <div
+              id="headSearchResult"
+              class="table-responsive mt-1"
+              style="display: none; max-height: 300px; overflow-y: auto"
+            >
+              <table class="table table-bordered table-sm mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Head ID</th>
+                    <th>Transaction Head</th>
+                  </tr>
+                </thead>
+
+                <tbody id="headSearchBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <!-- END OF SEARCH TRANSACTION HEAD ======================= -->
+
+          <!-- ==========================================
+                         AMOUNT
+          ========================================== -->
+
+          <div class="col-md-3">
+            <label class="form-label">
+              Amount
+              <span class="text-danger">*</span>
+            </label>
+
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              class="form-control"
+              name="amount"
+              id="amount"
+              required
+            />
+          </div>
+
+          <!-- ==========================================
+                         STATUS
+          ========================================== -->
+
+          <div class="col-md-3">
+            <label class="form-label"> Status </label>
+
+            <select class="form-select" name="status" id="status">
+              <option value="1">Active</option>
+
+              <option value="0">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ==========================================
+                     BUTTONS
+                ========================================== -->
+
+        <div class="mt-3">
+          <button type="submit" class="btn btn-primary" id="saveBtn">
+            Save
+          </button>
+
+          <button type="button" class="btn btn-secondary" id="clearBtn">
+            Clear
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<!-- ==========================================
+     EMPLOYEE DETAILS
+========================================== -->
+
+<div class="card shadow-sm mb-3">
+  <div class="card-header bg-primary text-white fw-bold">Employee Details</div>
+
+  <div class="card-body">
+    <div class="row g-3 align-items-center">
+
+      <!-- LEFT: DETAILS -->
+      <div class="col-md-10">
+        <div class="row g-2">
+
+          <div class="col-md-4">
+            <label class="form-label small fw-bold">Employee ID</label>
+            <input type="text" id="emp_id_display" class="form-control form-control-sm" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label small fw-bold">Employee Name</label>
+            <input type="text" id="emp_name" class="form-control form-control-sm" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label small fw-bold">Phone</label>
+            <input type="text" id="emp_phone" class="form-control form-control-sm" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label small fw-bold">Address</label>
+            <input type="text" id="emp_address" class="form-control form-control-sm" readonly>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: PHOTO -->
+      <div class="col-md-2 text-center">
+
+        <img id="emp_photo"
+             src=""
+             alt="Photo"
+             style="display:none; width:100px; height:100px; object-fit:cover;
+                    border-radius:8px; border:1px solid #dee2e6;">
+
+        <!-- Photo na thakle ei box dekhabe -->
+        <div id="emp_photo_empty"
+             class="d-flex align-items-center justify-content-center mx-auto text-muted small"
+             style="width:100px; height:100px; border-radius:8px;
+                    border:1px dashed #ced4da; background:#f8f9fa;">
+          No Photo
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     SALARY SETUP LIST 
+========================================== -->
+
+<div class="card shadow-sm">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <strong>Salary Setup List</strong>
+
+    <input
+      id="salarySearch"
+      class="form-control form-control-sm"
+      style="max-width: 260px"
+      placeholder="Search employee or head"
+    />
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-hover mb-0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Employee</th>
+          <th>Transaction Head</th>
+          <th class="text-end">Amount</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody id="salaryRows">
+        <tr>
+          <td colspan="6" class="text-center">Loading...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %} {% block extra_js %}
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="{% static 'js/employee_salary_setup/salary.js' %}"></script>
+<script src="{% static 'js/save_csrftoken.js' %}"></script>
+<script src="{% static 'js/payroll/employee_list_combo.js' %}"></script>
+<script src="{% static 'js/payroll/tran_head_list_combo.js' %}"></script>
+<script src="{% static 'js/payroll/duplication_check.js' %}"></script>
+<script src="{% static 'js/payroll/save_salary_setup.js' %}"></script>
+<script src="{% static 'js/employee_personal_details/load_employee.js' %}"></script>
+
+<script>
+    window.APP_URLS = {
+        TRAN_MAIN_HEAD_URL: "{% url 'get_transaction_main_heads_combo' %}",
+        TRAN_WITH_METHOD_URL: "/combo_load/transaction-with-method-combo/",
+        TRAN_WITH_URL: "/combo_load/transaction-with-combo/",
+        TRAN_USERS_URL: "/combo_load/transaction-with-user-combo/",
+    };
+</script>
+
+
+<!-- ==========================================
+     COMBO LOAD
+========================================== -->
+
+<script src="{% static 'js/payroll/get_page_init_add_payment.js' %}"></script>
+<script src="{% static 'js/combo_load/transaction_main_heads_combo.js' %}"></script>
+<script src="{% static 'js/combo_load/transaction_method_combo.js' %}"></script>
+<script src="{% static 'js/combo_load/transaction_group_combo.js' %}"></script>
+<script src="{% static 'js/combo_load/transaction_head_combo.js' %}"></script>
+<script src="{% static 'js/combo_load/transaction_with_method_combo.js' %}"></script>
+<script src="{% static 'js/combo_load/transaction_with_combo.js' %}"></script>
+<script src="{% static 'js/combo_load/transaction_with_user_combo.js' %}"></script>
+<script src="{% static 'js/combo_load/transaction_category_combo.js' %}"></script>
+
+
+{% endblock %}
